@@ -1,0 +1,73 @@
+<div class="table-container">
+  <table class="my-table">
+    <!-- Table header -->
+    <thead>
+      <tr>
+        <th *ngFor="let column of columns" (click)="sortData(column)">
+          {{ column }}
+          <span
+            *ngIf="sortedColumn === column"
+            [class]="
+              sortDirection === 'asc'
+                ? 'material-icons arrow-up'
+                : 'material-icons arrow-down'
+            "
+          ></span>
+        </th>
+      </tr>
+    </thead>
+    <!-- Table body -->
+    <tbody>
+      <tr *ngFor="let row of paginatedData">
+        <ng-container *ngFor="let column of row | keyvalue">
+          <td>{{ column.value }}</td>
+          <!-- Access data directly without column name -->
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pagination" *ngIf="isPaginationEnabled()">
+  <!-- Pagination Text -->
+  <div class="current-page-report" *ngIf="data.length > 0">
+    {{
+      currentPageReportTemplate
+        .replace("{first}", first.toString())
+        .replace("{last}", last.toString())
+        .replace("{totalRecords}", totalRecords.toString())
+    }}
+  </div>
+
+  <!-- Button -->
+  <div class="btn">
+    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+      <span class="material-symbols-outlined"> navigate_before </span>
+    </button>
+
+    <ng-container *ngFor="let pageNumber of totalPagesArray">
+      <button
+        (click)="goToPage(pageNumber)"
+        [class.active]="currentPage === pageNumber"
+      >
+        {{ pageNumber }}
+      </button>
+    </ng-container>
+
+    <button
+      (click)="goToPage(currentPage + 1)"
+      [disabled]="currentPage === totalPages"
+    >
+      <span class="material-symbols-outlined"> chevron_right </span>
+    </button>
+  </div>
+
+  <!--Pagination Option -->
+  <div class="select-wrapper">
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+      <option *ngFor="let option of rowsPerPageOptions" [value]="option">
+        {{ option }}
+      </option>
+    </select>
+  </div>
+</div>
